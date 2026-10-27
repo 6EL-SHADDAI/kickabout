@@ -12,7 +12,7 @@ CREATE TABLE matches (
     title          TEXT NOT NULL,
     venue          Text NOT NULL,
     city           TEXT NOT NULL, 
-    kickof_at      TIMESTAMPTZ NOT NULL, 
+    kickoff_at      TIMESTAMPTZ NOT NULL, 
     max_players    INT NOT NULL CHECK (max_players BETWEEN 2 AND 30), 
     created_at     TIMESTAMPTZ NOT NULL DEFAULT  now()
 ); 

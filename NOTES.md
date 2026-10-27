@@ -23,3 +23,17 @@ Defence in depth. The code check gives a friendly error message, and the constra
 It’s cheap. Postgres enforces it with an index, so it doesn’t slow anything down noticeably.
 
 Memory hook: Code checks are for good messages. Constraints are for guarantees
+
+
+// Register and Login working 
+1. How does a JWT work, and why can you read its payload without the secret?
+
+“A JWT is a small token made of three parts: a header, a payload and a signature. When I log in, my server puts my user id and an expiry date in the payload and signs it with a secret only the server knows. The client sends the token back with each request, and the server checks the signature and the expiry. If anyone changed the payload, the signature wouldn’t match. The payload is only encoded, not encrypted, so anyone can read it on jwt.io without the secret. The secret doesn’t hide the data, it proves nobody tampered with it. That’s why I only put the user id in it and never anything sensitive.”
+
+2. Why bcrypt instead of plain SHA-256?
+
+“SHA-256 is built to be fast, so an attacker who steals the database could try billions of password guesses per second. bcrypt is slow on purpose, and I can raise the cost factor as computers get faster. It also adds a random salt to every password, so two users with the same password get different hashes. That stops attackers using precomputed tables of common password hashes. I never store the real password, and at login I compare the attempt against the stored hash.”
+
+3. Why the same error message for a wrong email and a wrong password?
+
+“If the endpoint said ‘email not found’ for one and ‘wrong password’ for the other, anyone could use the login form to check which emails have accounts. A vague ‘Invalid email or password’ for both gives an attacker nothing to work with. It’s a small detail that prevents account enumeration.”

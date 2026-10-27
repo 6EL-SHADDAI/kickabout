@@ -5,7 +5,7 @@ const { z } = require("zod");
 
 const pool = require("../db/pool");
 const validate = require("../middleware/validate"); 
-
+const requireAuth = require("../middleware/auth");
 const router = express.Router(); 
 
 // schemas 
@@ -82,6 +82,20 @@ router.post("/login", validate(loginSchema), async (req, res) => {
         };
         res.json({user, token: signToken(user)}); 
         }); 
+
+        // GET api/auth/me
+        router.get("/me", requireAuth, async (req, res) => { 
+            const { rows} = await pool.query( 
+                "SELECT id, name, email, created_at FROM users WHERE id =$1", 
+                [req.user.id]
+            );
+            
+            if (!rows[0]) { 
+                return res.status(401).json({ error: {message: "User no longer exists"}}); 
+            }
+
+            res.json({ user: rows[0]});  
+        });
         module.exports =  router; 
 
     
